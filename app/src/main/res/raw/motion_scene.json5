@@ -1,0 +1,62 @@
+{
+  ConstraintSets: {
+    start: {
+      mainFab: {
+        end: ['parent','end',24],
+        bottom: ['parent','bottom',24]
+      },
+      fab1: {
+        end: ['parent','end',24],
+        bottom: ['parent','bottom',24]
+      },
+      fab2: {
+        end: ['parent','end',24],
+        bottom: ['parent','bottom',24]
+      },
+      fab3: {
+        end: ['parent','end',24],
+        bottom: ['parent','bottom',24]
+      }
+    },
+    end: {
+      mainFab: {
+        end: ['parent','end',24],
+        bottom: ['parent','bottom',24]
+      },
+      fab1: {
+        end: ['parent','end',24],
+        bottom: ['parent','bottom',112]
+      },
+      fab2: {
+        end: ['parent','end',80],
+        bottom: ['parent','bottom',84]
+      },
+      fab3: {
+        end: ['parent','end',100],
+        bottom: ['parent','bottom',24]
+      }
+    },
+    Transitions: {
+      default: {
+        from: 'start',
+        to: 'end',
+        KeyFrames: {
+          KeyAttributes: [
+            {
+              target: ['fab1'],
+              frames: [0, 100]
+            },
+            {
+              target: ['fab2'],
+              frames: [0, 100]
+            },
+            {
+              target: ['fab3'],
+              frames: [0, 100]
+            }
+          ]
+        }
+      }
+    }
+  }
+}
