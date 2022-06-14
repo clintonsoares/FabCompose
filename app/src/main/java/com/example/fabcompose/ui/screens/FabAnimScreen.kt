@@ -1,10 +1,12 @@
 package com.example.fabcompose.ui.screens
 
+import android.widget.Toast
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -22,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.fabcompose.utils.ClickState
 import com.ramcosta.composedestinations.annotation.Destination
@@ -31,6 +35,8 @@ import com.ramcosta.composedestinations.annotation.Destination
 fun FabAnimLayout(){
     var clickState by remember { mutableStateOf( ClickState.Inactive ) }
     val transition = updateTransition(targetState = clickState, label = "clickedState")
+
+    val mContext = LocalContext.current
 
     val mainFabRotate by transition.animateFloat(label = "clickedState") { state ->
         when (state) {
@@ -90,7 +96,14 @@ fun FabAnimLayout(){
             modifier = Modifier
                 .fillMaxSize()
                 .padding(end = 32.dp, bottom = 40.dp)
-                .offset(x = fab1OffsetX, y = fab1OffsetY),
+                .offset(x = fab1OffsetX, y = fab1OffsetY)
+                .pointerInput(Unit){
+                    detectTapGestures(
+                        onLongPress = {
+                            Toast.makeText(mContext, "Shopping Cart", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                },
             contentAlignment = Alignment.BottomEnd
         ) {
             IconButton(
@@ -116,7 +129,14 @@ fun FabAnimLayout(){
             modifier = Modifier
                 .fillMaxSize()
                 .padding(end = 32.dp, bottom = 40.dp)
-                .offset(x = fab2OffsetX, y = fab2OffsetY),
+                .offset(x = fab2OffsetX, y = fab2OffsetY)
+                .pointerInput(Unit){
+                    detectTapGestures(
+                        onLongPress = {
+                            Toast.makeText(mContext, "Email", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                },
             contentAlignment = Alignment.BottomEnd
         ) {
             IconButton(
@@ -142,7 +162,14 @@ fun FabAnimLayout(){
             modifier = Modifier
                 .fillMaxSize()
                 .padding(end = 32.dp, bottom = 40.dp)
-                .offset(x = fab3OffsetX, y = fab3OffsetY),
+                .offset(x = fab3OffsetX, y = fab3OffsetY)
+                .pointerInput(Unit){
+                    detectTapGestures(
+                        onLongPress = {
+                            Toast.makeText(mContext, "Contact", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                },
             contentAlignment = Alignment.BottomEnd
         ) {
             IconButton(
