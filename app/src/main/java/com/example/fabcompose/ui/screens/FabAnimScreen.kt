@@ -10,10 +10,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,12 +24,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.fabcompose.ui.screens.destinations.DailyTasksLayoutDestination
+import com.example.fabcompose.ui.theme.Blue700
+import com.example.fabcompose.ui.theme.Green700
+import com.example.fabcompose.ui.theme.Red700
 import com.example.fabcompose.utils.ClickState
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@RootNavGraph(start = true)
 @Destination
 @Composable
-fun FabAnimLayout(){
+fun FabAnimLayout(
+    navigator: DestinationsNavigator
+){
     var clickState by remember { mutableStateOf( ClickState.Inactive ) }
     val transition = updateTransition(targetState = clickState, label = "clickedState")
 
@@ -96,26 +102,28 @@ fun FabAnimLayout(){
             modifier = Modifier
                 .fillMaxSize()
                 .padding(end = 32.dp, bottom = 40.dp)
-                .offset(x = fab1OffsetX, y = fab1OffsetY)
-                .pointerInput(Unit){
-                    detectTapGestures(
-                        onLongPress = {
-                            Toast.makeText(mContext, "Shopping Cart", Toast.LENGTH_SHORT).show()
-                        }
-                    )
-                },
+                .offset(x = fab1OffsetX, y = fab1OffsetY),
             contentAlignment = Alignment.BottomEnd
         ) {
             IconButton(
-                onClick = {  },
+                onClick = {
+                    navigator.navigate(DailyTasksLayoutDestination)
+                },
                 modifier = Modifier
                     .size(50.dp)
                     .shadow(elevation = 8.dp, shape = CircleShape)
-                    .background(Color.Green, shape = CircleShape)
+                    .background(Green700, shape = CircleShape)
                     .border(width = 1.dp, Color.Green, shape = CircleShape)
+                    .pointerInput(Unit){
+                        detectTapGestures(
+                            onLongPress = {
+                                Toast.makeText(mContext, "Listing", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    }
             ) {
                 Icon(
-                    Icons.Default.ShoppingCart,
+                    Icons.Default.List,
                     contentDescription = "fab1",
                     tint = Color.White
                 )
@@ -129,14 +137,7 @@ fun FabAnimLayout(){
             modifier = Modifier
                 .fillMaxSize()
                 .padding(end = 32.dp, bottom = 40.dp)
-                .offset(x = fab2OffsetX, y = fab2OffsetY)
-                .pointerInput(Unit){
-                    detectTapGestures(
-                        onLongPress = {
-                            Toast.makeText(mContext, "Email", Toast.LENGTH_SHORT).show()
-                        }
-                    )
-                },
+                .offset(x = fab2OffsetX, y = fab2OffsetY),
             contentAlignment = Alignment.BottomEnd
         ) {
             IconButton(
@@ -144,8 +145,15 @@ fun FabAnimLayout(){
                 modifier = Modifier
                     .size(50.dp)
                     .shadow(elevation = 8.dp, shape = CircleShape)
-                    .background(Color.Red, shape = CircleShape)
+                    .background(Red700, shape = CircleShape)
                     .border(width = 1.dp, Color.Red, shape = CircleShape)
+                    .pointerInput(Unit){
+                        detectTapGestures(
+                            onLongPress = {
+                                Toast.makeText(mContext, "Email", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    }
             ) {
                 Icon(
                     Icons.Default.Email,
@@ -162,14 +170,7 @@ fun FabAnimLayout(){
             modifier = Modifier
                 .fillMaxSize()
                 .padding(end = 32.dp, bottom = 40.dp)
-                .offset(x = fab3OffsetX, y = fab3OffsetY)
-                .pointerInput(Unit){
-                    detectTapGestures(
-                        onLongPress = {
-                            Toast.makeText(mContext, "Contact", Toast.LENGTH_SHORT).show()
-                        }
-                    )
-                },
+                .offset(x = fab3OffsetX, y = fab3OffsetY),
             contentAlignment = Alignment.BottomEnd
         ) {
             IconButton(
@@ -177,8 +178,15 @@ fun FabAnimLayout(){
                 modifier = Modifier
                     .size(50.dp)
                     .shadow(elevation = 8.dp, shape = CircleShape)
-                    .background(Color.Blue, shape = CircleShape)
+                    .background(Blue700, shape = CircleShape)
                     .border(width = 1.dp, Color.Blue, shape = CircleShape)
+                    .pointerInput(Unit){
+                        detectTapGestures(
+                            onLongPress = {
+                                Toast.makeText(mContext, "Contact", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    }
             ) {
                 Icon(
                     Icons.Default.AccountBox,
@@ -218,5 +226,6 @@ fun FabAnimLayout(){
                 )
             }
         }
+
     }
 }
