@@ -11,10 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +30,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RootNavGraph(start = true)
 @Destination
 @Composable
@@ -90,142 +88,151 @@ fun FabAnimLayout(
         }
     }
 
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-    ){
-
-        /**
-         * Fab 1 Button
-         **/
-        Box(
+    Scaffold { screenPadding ->
+        Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(end = 32.dp, bottom = 40.dp)
-                .offset(x = fab1OffsetX, y = fab1OffsetY),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            IconButton(
-                onClick = {
-                    navigator.navigate(DailyTasksLayoutDestination)
-                },
-                modifier = Modifier
-                    .size(50.dp)
-                    .shadow(elevation = 8.dp, shape = CircleShape)
-                    .background(Green700, shape = CircleShape)
-                    .border(width = 1.dp, Color.Green, shape = CircleShape)
-                    .pointerInput(Unit){
-                        detectTapGestures(
-                            onLongPress = {
-                                Toast.makeText(mContext, "Listing", Toast.LENGTH_SHORT).show()
-                            }
-                        )
-                    }
-            ) {
-                Icon(
-                    Icons.Default.List,
-                    contentDescription = "fab1",
-                    tint = Color.White
-                )
-            }
-        }
+                .padding(screenPadding)
+        ){
 
-        /**
-         * Fab 2 Button
-         **/
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(end = 32.dp, bottom = 40.dp)
-                .offset(x = fab2OffsetX, y = fab2OffsetY),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            IconButton(
-                onClick = {  },
+            /**
+             * Fab 1 Button
+             **/
+            Box(
                 modifier = Modifier
-                    .size(50.dp)
-                    .shadow(elevation = 8.dp, shape = CircleShape)
-                    .background(Red700, shape = CircleShape)
-                    .border(width = 1.dp, Color.Red, shape = CircleShape)
-                    .pointerInput(Unit){
-                        detectTapGestures(
-                            onLongPress = {
-                                Toast.makeText(mContext, "Email", Toast.LENGTH_SHORT).show()
-                            }
-                        )
-                    }
+                    .fillMaxSize()
+                    .padding(end = 32.dp, bottom = 40.dp)
+                    .offset(x = fab1OffsetX, y = fab1OffsetY),
+                contentAlignment = Alignment.BottomEnd
             ) {
-                Icon(
-                    Icons.Default.Email,
-                    contentDescription = "fab2",
-                    tint = Color.White
-                )
+                IconButton(
+                    onClick = {
+                        navigator.navigate(DailyTasksLayoutDestination)
+                    },
+                    modifier = Modifier
+                        .size(50.dp)
+                        .shadow(elevation = 8.dp, shape = CircleShape)
+                        .background(Green700, shape = CircleShape)
+                        .border(width = 1.dp, Color.Green, shape = CircleShape)
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onLongPress = {
+                                    Toast
+                                        .makeText(mContext, "Listing", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            )
+                        }
+                ) {
+                    Icon(
+                        Icons.Default.List,
+                        contentDescription = "fab1",
+                        tint = Color.White
+                    )
+                }
             }
-        }
 
-        /**
-         * Fab 3 Button
-         **/
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(end = 32.dp, bottom = 40.dp)
-                .offset(x = fab3OffsetX, y = fab3OffsetY),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            IconButton(
-                onClick = {  },
+            /**
+             * Fab 2 Button
+             **/
+            Box(
                 modifier = Modifier
-                    .size(50.dp)
-                    .shadow(elevation = 8.dp, shape = CircleShape)
-                    .background(Blue700, shape = CircleShape)
-                    .border(width = 1.dp, Color.Blue, shape = CircleShape)
-                    .pointerInput(Unit){
-                        detectTapGestures(
-                            onLongPress = {
-                                Toast.makeText(mContext, "Contact", Toast.LENGTH_SHORT).show()
-                            }
-                        )
-                    }
+                    .fillMaxSize()
+                    .padding(end = 32.dp, bottom = 40.dp)
+                    .offset(x = fab2OffsetX, y = fab2OffsetY),
+                contentAlignment = Alignment.BottomEnd
             ) {
-                Icon(
-                    Icons.Default.AccountBox,
-                    contentDescription = "fab3",
-                    tint = Color.White
-                )
+                IconButton(
+                    onClick = {  },
+                    modifier = Modifier
+                        .size(50.dp)
+                        .shadow(elevation = 8.dp, shape = CircleShape)
+                        .background(Red700, shape = CircleShape)
+                        .border(width = 1.dp, Color.Red, shape = CircleShape)
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onLongPress = {
+                                    Toast
+                                        .makeText(mContext, "Email", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            )
+                        }
+                ) {
+                    Icon(
+                        Icons.Default.Email,
+                        contentDescription = "fab2",
+                        tint = Color.White
+                    )
+                }
             }
-        }
 
-        /**
-        * Main Fab Button
-        **/
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(end = 32.dp, bottom = 40.dp),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            IconButton(
-                onClick = {
-                    clickState = when (clickState) {
-                        ClickState.Inactive -> ClickState.Active
-                        ClickState.Active -> ClickState.Inactive
-                    }
-                },
+            /**
+             * Fab 3 Button
+             **/
+            Box(
                 modifier = Modifier
-                    .size(50.dp)
-                    .shadow(elevation = 8.dp, shape = CircleShape)
-                    .background(MaterialTheme.colorScheme.primary, shape = CircleShape)
-                    .border(width = 1.dp, Color.DarkGray, shape = CircleShape),
+                    .fillMaxSize()
+                    .padding(end = 32.dp, bottom = 40.dp)
+                    .offset(x = fab3OffsetX, y = fab3OffsetY),
+                contentAlignment = Alignment.BottomEnd
             ) {
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription = "mainFab",
-                    tint = Color.White,
-                    modifier = Modifier.rotate(mainFabRotate)
-                )
+                IconButton(
+                    onClick = {  },
+                    modifier = Modifier
+                        .size(50.dp)
+                        .shadow(elevation = 8.dp, shape = CircleShape)
+                        .background(Blue700, shape = CircleShape)
+                        .border(width = 1.dp, Color.Blue, shape = CircleShape)
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onLongPress = {
+                                    Toast
+                                        .makeText(mContext, "Contact", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            )
+                        }
+                ) {
+                    Icon(
+                        Icons.Default.AccountBox,
+                        contentDescription = "fab3",
+                        tint = Color.White
+                    )
+                }
             }
-        }
 
+            /**
+             * Main Fab Button
+             **/
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(end = 32.dp, bottom = 40.dp),
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                IconButton(
+                    onClick = {
+                        clickState = when (clickState) {
+                            ClickState.Inactive -> ClickState.Active
+                            ClickState.Active -> ClickState.Inactive
+                        }
+                    },
+                    modifier = Modifier
+                        .size(50.dp)
+                        .shadow(elevation = 8.dp, shape = CircleShape)
+                        .background(MaterialTheme.colorScheme.primary, shape = CircleShape)
+                        .border(width = 1.dp, Color.DarkGray, shape = CircleShape),
+                ) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = "mainFab",
+                        tint = Color.White,
+                        modifier = Modifier.rotate(mainFabRotate)
+                    )
+                }
+            }
+
+        }
     }
 }
