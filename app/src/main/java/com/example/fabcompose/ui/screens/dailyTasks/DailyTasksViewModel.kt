@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 
 class DailyTasksViewModel: ViewModel() {
-    private val defaultTasksList = listOf("Drink Water", "Walk", "Run")
+    private var defaultTasksList = listOf("Drink Water", "Walk", "Run")
     val filteredList: MutableState<List<String>> = mutableStateOf(emptyList())
 
     init {
@@ -28,6 +28,13 @@ class DailyTasksViewModel: ViewModel() {
                 filteredList.value = emptyList()
             }
         }
+    }
+
+    fun addTaskToList(task: String){
+        val tempList = defaultTasksList.toMutableList()
+        tempList.add(task)
+        defaultTasksList = tempList
+        filteredList.value = defaultTasksList
     }
 
 }
