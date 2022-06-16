@@ -1,5 +1,6 @@
 package com.example.fabcompose.ui.screens.dailyTasks
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -12,16 +13,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -29,29 +33,30 @@ import androidx.compose.ui.unit.sp
 import com.example.fabcompose.ui.custom.BackIconButton
 import com.example.fabcompose.ui.theme.GreenGrey80
 import com.example.fabcompose.ui.theme.PrimaryColor
-import com.example.fabcompose.ui.theme.Red700
 import com.example.fabcompose.utils.StringConstants
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Destination
 @Composable
 fun DailyTasksLayout(
     navigator: DestinationsNavigator,
     viewModel: DailyTasksViewModel = DailyTasksViewModel()
-){
+) {
     var isAddTaskClicked by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = { TopBarLayout(
-            navigator = navigator,
-            onAddClick = {
-                isAddTaskClicked = true
-            }
-        )}
-    ){ screenPadding ->
+        topBar = {
+            TopBarLayout(
+                navigator = navigator,
+                onAddClick = {
+                    isAddTaskClicked = true
+                }
+            )
+        }
+    ) { screenPadding ->
         Surface(
             modifier = Modifier
                 .padding(screenPadding)
@@ -92,13 +97,30 @@ fun DailyTasksLayout(
                 if (tasksList.isNotEmpty()) {
                     LazyColumn(
                         modifier = Modifier
-                            .fillMaxWidth()
-                    ){
+                            .fillMaxSize()
+                            .padding(vertical = 8.dp)
+                    ) {
                         items(items = tasksList, itemContent = { taskStr ->
-                            Text(
-                                text = taskStr,
-                                color = PrimaryColor
-                            )
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(48.dp)
+                                    .shadow(elevation = 8.dp, shape = RoundedCornerShape(8.dp))
+                                    .background(GreenGrey80, shape = RoundedCornerShape(8.dp))
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(8.dp),
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = taskStr,
+                                        color = PrimaryColor
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(16.dp))
                         })
                     }
                 } else {
@@ -124,8 +146,8 @@ fun DailyTasksLayout(
                         modifier = Modifier
                             .width(300.dp)
                             .height(300.dp)
-                            .shadow(elevation = 8.dp, shape = RoundedCornerShape(10.dp))
-                            .background(GreenGrey80, shape = RoundedCornerShape(10.dp))
+                            .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp))
+                            .background(GreenGrey80, shape = RoundedCornerShape(12.dp))
                             .padding(horizontal = 40.dp, vertical = 12.dp)
                     ) {
                         Column(
@@ -152,7 +174,10 @@ fun DailyTasksLayout(
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 IconButton(
-                                    onClick = { isAddTaskClicked = false },
+                                    onClick = {
+                                        isAddTaskClicked = false
+                                        addTaskText = ""
+                                    },
                                     modifier = Modifier
                                         .size(50.dp)
                                         .shadow(elevation = 4.dp, shape = CircleShape)
@@ -197,7 +222,7 @@ fun DailyTasksLayout(
 fun TopBarLayout(
     navigator: DestinationsNavigator,
     onAddClick: () -> Unit
-){
+) {
     TopAppBar(
         title = {
             Text(text = StringConstants.DAILY_TASKS)

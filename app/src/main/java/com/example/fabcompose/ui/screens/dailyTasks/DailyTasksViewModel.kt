@@ -17,7 +17,7 @@ class DailyTasksViewModel: ViewModel() {
             filteredList.value = defaultTasksList
         } else {
             val tempList = mutableListOf<String>()
-            filteredList.value.forEach {
+            defaultTasksList.forEach {
                 if(it.contains(query, ignoreCase = true)){
                     tempList.add(it)
                 }
