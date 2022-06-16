@@ -31,10 +31,11 @@ class DailyTasksViewModel: ViewModel() {
     }
 
     fun addTaskToList(task: String){
-        val tempList = defaultTasksList.toMutableList()
-        tempList.add(task)
-        defaultTasksList = tempList
-        filteredList.value = defaultTasksList
+        defaultTasksList.toMutableList().let {
+            it.add(task)
+            defaultTasksList = it
+            filteredList.value = defaultTasksList
+        }
     }
 
 }

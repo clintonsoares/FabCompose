@@ -58,7 +58,7 @@ fun DailyTasksLayout(
                 .fillMaxSize()
         ) {
             var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
-            var addTaskText by remember { mutableStateOf(TextFieldValue("")) }
+            var addTaskText by remember { mutableStateOf("") }
             val tasksList = viewModel.filteredList.value
             Column(
                 modifier = Modifier
@@ -167,8 +167,9 @@ fun DailyTasksLayout(
                                 }
                                 IconButton(
                                     onClick = {
-                                        viewModel.addTaskToList(addTaskText.text)
+                                        viewModel.addTaskToList(addTaskText)
                                         isAddTaskClicked = false
+                                        addTaskText = ""
                                     },
                                     modifier = Modifier
                                         .size(50.dp)
