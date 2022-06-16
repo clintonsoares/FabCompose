@@ -65,6 +65,8 @@ fun DailyTasksLayout(
             var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
             var addTaskText by remember { mutableStateOf("") }
             val tasksList = viewModel.filteredList.value
+            val usersList = viewModel.filteredPairs.value
+            val userMap = viewModel.filteredMap.value
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -90,39 +92,13 @@ fun DailyTasksLayout(
                     textStyle = TextStyle(fontSize = 16.sp),
                     modifier = Modifier
                         .fillMaxWidth(),
-                    shape = RoundedCornerShape(50.dp),
+                    shape = RoundedCornerShape(16.dp),
                     singleLine = true,
                     enabled = !isAddTaskClicked
                 )
                 if (tasksList.isNotEmpty()) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(vertical = 8.dp)
-                    ) {
-                        items(items = tasksList, itemContent = { taskStr ->
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(48.dp)
-                                    .shadow(elevation = 8.dp, shape = RoundedCornerShape(8.dp))
-                                    .background(GreenGrey80, shape = RoundedCornerShape(8.dp))
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(8.dp),
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        text = taskStr,
-                                        color = PrimaryColor
-                                    )
-                                }
-                            }
-                            Spacer(modifier = Modifier.height(16.dp))
-                        })
-                    }
+//                    TasksListView(tasksList)
+                    UsersListView(usersList)
                 } else {
                     Text(
                         text = "No matches Found",
@@ -239,4 +215,95 @@ fun TopBarLayout(
         },
         backgroundColor = PrimaryColor
     )
+}
+
+@Composable
+fun TasksListView(
+    tasksList: List<String>
+){
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 16.dp)
+    ) {
+        items(items = tasksList, itemContent = { taskStr ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .shadow(elevation = 8.dp, shape = RoundedCornerShape(8.dp))
+                    .background(GreenGrey80, shape = RoundedCornerShape(8.dp))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = taskStr,
+                        color = PrimaryColor
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        })
+    }
+}
+
+@Composable
+fun UsersListView(
+    usersList: List<Pair<String,String>>
+){
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 24.dp)
+    ) {
+        items(items = usersList, itemContent = { userPair ->
+            val checkedState = remember { mutableStateOf(false) }
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(elevation = 8.dp, shape = RoundedCornerShape(8.dp))
+                    .background(GreenGrey80, shape = RoundedCornerShape(8.dp))
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp)
+                ) {
+                    Box( modifier = Modifier.weight(2f,true) ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(start = 16.dp),
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = userPair.first,
+                                color = PrimaryColor
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = userPair.second,
+                                color = PrimaryColor
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .weight(1f,true),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Checkbox(
+                            checked = checkedState.value,
+                            onCheckedChange = { checkedState.value = it }
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        })
+    }
 }
