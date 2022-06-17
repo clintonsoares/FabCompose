@@ -1,6 +1,6 @@
 package com.example.fabcompose.ui.screens.dailyTasks
 
-import android.util.Log
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -13,39 +13,45 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fabcompose.database.entities.DailyTaskEntity
 import com.example.fabcompose.ui.custom.BackIconButton
+import com.example.fabcompose.ui.custom.CirclesLoader
 import com.example.fabcompose.ui.theme.GreenGrey80
 import com.example.fabcompose.ui.theme.PrimaryColor
+import com.example.fabcompose.ui.theme.Red700
 import com.example.fabcompose.utils.StringConstants
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun DailyTasksLayout(
-    navigator: DestinationsNavigator,
-    viewModel: DailyTasksViewModel = DailyTasksViewModel()
+    navigator: DestinationsNavigator
 ) {
     var isAddTaskClicked by remember { mutableStateOf(false) }
+    var isDeleteTaskClicked by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val applicationObj = context.applicationContext as Application
+    val viewModel = DailyTasksViewModel(applicationObj)
+    viewModel.onScreenCreated()
+    val isLoading = viewModel.isLoading.value
 
     Scaffold(
         topBar = {
@@ -63,10 +69,9 @@ fun DailyTasksLayout(
                 .fillMaxSize()
         ) {
             var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
-            var addTaskText by remember { mutableStateOf("") }
+            var addTaskTitle by remember { mutableStateOf("") }
+            var addTaskComments by remember { mutableStateOf("") }
             val tasksList = viewModel.filteredList.value
-            val usersList = viewModel.filteredPairs.value
-            val userMap = viewModel.filteredMap.value
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -94,11 +99,15 @@ fun DailyTasksLayout(
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     singleLine = true,
-                    enabled = !isAddTaskClicked
+                    enabled = !(isAddTaskClicked || isDeleteTaskClicked)
                 )
                 if (tasksList.isNotEmpty()) {
-//                    TasksListView(tasksList)
-                    UsersListView(usersList)
+                    dailyTasksListView(
+                        tasksList,
+                        viewModel,
+                        onCheckClicked = {},
+                        onDeleteClicked = { isDeleteTaskClicked = true }
+                    )
                 } else {
                     Text(
                         text = "No matches Found",
@@ -131,18 +140,40 @@ fun DailyTasksLayout(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            Text(text = "Add New Task", color = Color.White)
+                            Text(text = "Add New Task", color = Color.White, fontSize = 16.sp)
                             TextField(
-                                value = addTaskText,
+                                value = addTaskTitle,
                                 onValueChange = {
-                                    addTaskText = it
+                                    addTaskTitle = it
                                 },
                                 colors = TextFieldDefaults.textFieldColors(
                                     placeholderColor = Color.DarkGray,
                                     textColor = Color.White,
                                     cursorColor = PrimaryColor,
                                     focusedIndicatorColor = PrimaryColor
-                                )
+                                ),
+                                singleLine = true,
+                                placeholder = {
+                                    Text(text = "Task Name")
+                                }
+
+                            )
+                            TextField(
+                                value = addTaskComments,
+                                onValueChange = {
+                                    addTaskComments = it
+                                },
+                                colors = TextFieldDefaults.textFieldColors(
+                                    placeholderColor = Color.DarkGray,
+                                    textColor = Color.White,
+                                    cursorColor = PrimaryColor,
+                                    focusedIndicatorColor = PrimaryColor
+                                ),
+                                modifier = Modifier.height(120.dp),
+                                maxLines = 4,
+                                placeholder = {
+                                    Text(text = "Comments...")
+                                }
                             )
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -152,7 +183,8 @@ fun DailyTasksLayout(
                                 IconButton(
                                     onClick = {
                                         isAddTaskClicked = false
-                                        addTaskText = ""
+                                        addTaskTitle = ""
+                                        addTaskComments = ""
                                     },
                                     modifier = Modifier
                                         .size(50.dp)
@@ -168,9 +200,10 @@ fun DailyTasksLayout(
                                 }
                                 IconButton(
                                     onClick = {
-                                        viewModel.addTaskToList(addTaskText)
+                                        viewModel.onAddTaskClicked(addTaskTitle, addTaskComments)
                                         isAddTaskClicked = false
-                                        addTaskText = ""
+                                        addTaskTitle = ""
+                                        addTaskComments = ""
                                     },
                                     modifier = Modifier
                                         .size(50.dp)
@@ -190,6 +223,95 @@ fun DailyTasksLayout(
                     }
                 }
             }
+            if (isDeleteTaskClicked) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .alpha(0.6f)
+                            .background(Color.Black)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .width(300.dp)
+                            .height(200.dp)
+                            .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp))
+                            .background(GreenGrey80, shape = RoundedCornerShape(12.dp))
+                            .padding(horizontal = 40.dp, vertical = 12.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Text(
+                                text = "Confirm Task Deletion?",
+                                color = Color.White,
+                                fontSize = 16.sp
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                IconButton(
+                                    onClick = {
+                                        isDeleteTaskClicked = false
+                                    },
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .shadow(elevation = 4.dp, shape = CircleShape)
+                                        .background(Color.Red, shape = CircleShape)
+                                        .border(width = 1.dp, Color.White, shape = CircleShape)
+                                ) {
+                                    Icon(
+                                        Icons.Default.Close,
+                                        contentDescription = "cancelAddBtn",
+                                        tint = Color.White
+                                    )
+                                }
+                                IconButton(
+                                    onClick = {
+                                        viewModel.onDeleteConfirmClicked()
+                                        isDeleteTaskClicked = false
+                                    },
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .shadow(elevation = 4.dp, shape = CircleShape)
+                                        .background(Color.Green, shape = CircleShape)
+                                        .border(width = 1.dp, Color.White, shape = CircleShape)
+                                ) {
+                                    Icon(
+                                        Icons.Default.Check,
+                                        contentDescription = "DeleteTaskConfirmBtn",
+                                        tint = Color.White
+                                    )
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+    if (isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .alpha(0.9f)
+                    .background(Color.Black)
+            )
+            CirclesLoader()
         }
     }
 }
@@ -218,49 +340,18 @@ fun TopBarLayout(
 }
 
 @Composable
-fun TasksListView(
-    tasksList: List<String>
-){
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 16.dp)
-    ) {
-        items(items = tasksList, itemContent = { taskStr ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .shadow(elevation = 8.dp, shape = RoundedCornerShape(8.dp))
-                    .background(GreenGrey80, shape = RoundedCornerShape(8.dp))
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(8.dp),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = taskStr,
-                        color = PrimaryColor
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-        })
-    }
-}
-
-@Composable
-fun UsersListView(
-    usersList: List<Pair<String,String>>
-){
+fun dailyTasksListView(
+    tasksList: List<DailyTaskEntity>,
+    viewModel: DailyTasksViewModel,
+    onCheckClicked: () -> Unit,
+    onDeleteClicked: () -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 24.dp)
     ) {
-        items(items = usersList, itemContent = { userPair ->
+        items(items = tasksList, itemContent = { task ->
             val checkedState = remember { mutableStateOf(false) }
             Card(
                 modifier = Modifier
@@ -273,7 +364,7 @@ fun UsersListView(
                         .fillMaxSize()
                         .padding(8.dp)
                 ) {
-                    Box( modifier = Modifier.weight(2f,true) ) {
+                    Box(modifier = Modifier.weight(4f, true)) {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -281,25 +372,51 @@ fun UsersListView(
                             verticalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = userPair.first,
+                                text = task.title,
                                 color = PrimaryColor
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = userPair.second,
+                                text = task.taskDate,
                                 color = PrimaryColor
                             )
                         }
                     }
                     Box(
                         modifier = Modifier
-                            .weight(1f,true),
+                            .weight(1f, true),
                         contentAlignment = Alignment.Center
                     ) {
                         Checkbox(
                             checked = checkedState.value,
-                            onCheckedChange = { checkedState.value = it }
+                            onCheckedChange = {
+                                checkedState.value = it
+                                onCheckClicked.invoke()
+                            },
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = PrimaryColor
+                            )
                         )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .weight(1f, true),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        IconButton(
+                            onClick = {
+                                viewModel.deleteTaskId.value = task.id
+                                onDeleteClicked.invoke()
+                            },
+                            modifier = Modifier
+                                .size(50.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = "deleteTaskBtn",
+                                tint = Red700
+                            )
+                        }
                     }
                 }
             }
