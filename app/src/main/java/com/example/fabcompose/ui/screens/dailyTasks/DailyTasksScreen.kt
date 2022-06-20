@@ -50,8 +50,8 @@ fun DailyTasksLayout(
     val context = LocalContext.current
     val applicationObj = context.applicationContext as Application
     val viewModel = DailyTasksViewModel(applicationObj)
+//    var isLoading = true
     viewModel.onScreenCreated()
-    val isLoading = viewModel.isLoading.value
 
     Scaffold(
         topBar = {
@@ -105,7 +105,6 @@ fun DailyTasksLayout(
                     dailyTasksListView(
                         tasksList,
                         viewModel,
-                        onCheckClicked = {},
                         onDeleteClicked = { isDeleteTaskClicked = true }
                     )
                 } else {
@@ -299,21 +298,21 @@ fun DailyTasksLayout(
             }
         }
     }
-    if (isLoading) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .alpha(0.9f)
-                    .background(Color.Black)
-            )
-            CirclesLoader()
-        }
-    }
+//    if (isLoading) {
+//        Box(
+//            modifier = Modifier
+//                .fillMaxSize(),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            Box(
+//                Modifier
+//                    .fillMaxSize()
+//                    .alpha(0.9f)
+//                    .background(Color.Black)
+//            )
+//            CirclesLoader()
+//        }
+//    }
 }
 
 @Composable
@@ -343,7 +342,6 @@ fun TopBarLayout(
 fun dailyTasksListView(
     tasksList: List<DailyTaskEntity>,
     viewModel: DailyTasksViewModel,
-    onCheckClicked: () -> Unit,
     onDeleteClicked: () -> Unit
 ) {
     LazyColumn(
@@ -352,7 +350,7 @@ fun dailyTasksListView(
             .padding(top = 24.dp)
     ) {
         items(items = tasksList, itemContent = { task ->
-            val checkedState = remember { mutableStateOf(false) }
+            val checkedState = remember { mutableStateOf(task.isCompleted) }
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -391,7 +389,7 @@ fun dailyTasksListView(
                             checked = checkedState.value,
                             onCheckedChange = {
                                 checkedState.value = it
-                                onCheckClicked.invoke()
+                                viewModel.onCheckTaskClicked(task.id, it)
                             },
                             colors = CheckboxDefaults.colors(
                                 checkedColor = PrimaryColor

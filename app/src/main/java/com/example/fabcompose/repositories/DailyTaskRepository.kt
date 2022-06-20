@@ -31,4 +31,8 @@ class DailyTaskRepository(application: Application) {
         dailyTaskDao.deleteAllDailyTasks()
     }
 
+    suspend fun checkSingleTaskInDb(id: Int,checked: Boolean){
+        dailyTaskDao.checkSingleTaskInDb(id, checked)
+    }
+
 }

@@ -16,7 +16,6 @@ class DailyTasksViewModel(appObj: Application) : AndroidViewModel(appObj) {
     private val dailyTaskRepository: DailyTaskRepository = DailyTaskRepository(appObj)
     private val dailyTasksList: MutableState<List<DailyTaskEntity>> = mutableStateOf(emptyList())
     val filteredList: MutableState<List<DailyTaskEntity>> = mutableStateOf(emptyList())
-    val isLoading = mutableStateOf(false)
     val deleteTaskId = mutableStateOf(0)
 
     fun onScreenCreated() {
@@ -65,7 +64,9 @@ class DailyTasksViewModel(appObj: Application) : AndroidViewModel(appObj) {
         }
     }
 
-
+    fun onCheckTaskClicked(taskId: Int, checked: Boolean) {
+        checkTaskInDb(taskId, checked)
+    }
 
     /**
      * Private DB Functions
@@ -74,8 +75,8 @@ class DailyTasksViewModel(appObj: Application) : AndroidViewModel(appObj) {
     private fun getAllDailyTasks() {
         viewModelScope.launch(Dispatchers.IO) {
             val fetchedTasks = dailyTaskRepository.fetchAllDailyTasks()
-            dailyTasksList.value = fetchedTasks
             filteredList.value = fetchedTasks
+            dailyTasksList.value = fetchedTasks
         }
     }
 
@@ -90,6 +91,12 @@ class DailyTasksViewModel(appObj: Application) : AndroidViewModel(appObj) {
         viewModelScope.launch(Dispatchers.IO) {
             dailyTaskRepository.deleteDailyTaskById(taskId)
             getAllDailyTasks()
+        }
+    }
+
+    private fun checkTaskInDb(taskId: Int, checked: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dailyTaskRepository.checkSingleTaskInDb(taskId, checked)
         }
     }
 

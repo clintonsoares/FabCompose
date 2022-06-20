@@ -20,10 +20,13 @@ interface DailyTaskDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDailyTask(dailyTask: DailyTaskEntity)
 
-    @Query("DELETE FROM dailyTasks where id = :id")
+    @Query("DELETE FROM dailyTasks WHERE id = :id")
     suspend fun deleteDailyTaskById(id: Int)
 
     @Query("DELETE FROM dailyTasks")
     suspend fun deleteAllDailyTasks()
+
+    @Query("UPDATE dailyTasks SET is_completed = :checked WHERE id = :id")
+    suspend fun checkSingleTaskInDb(id: Int,checked: Boolean)
 
 }
