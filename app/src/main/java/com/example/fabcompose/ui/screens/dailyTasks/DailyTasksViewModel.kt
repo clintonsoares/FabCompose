@@ -74,9 +74,9 @@ class DailyTasksViewModel(appObj: Application) : AndroidViewModel(appObj) {
 
     private fun getAllDailyTasks() {
         viewModelScope.launch(Dispatchers.IO) {
-            val fetchedTasks = dailyTaskRepository.fetchAllDailyTasks()
-            filteredList.value = fetchedTasks
-            dailyTasksList.value = fetchedTasks
+            filteredList.value = dailyTaskRepository.fetchAllDailyTasks().also {
+                dailyTasksList.value = it
+            }
         }
     }
 

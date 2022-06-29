@@ -1,6 +1,7 @@
 package com.example.fabcompose.ui.screens.dailyTasks
 
 import android.app.Application
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -50,7 +51,6 @@ fun DailyTasksLayout(
     val context = LocalContext.current
     val applicationObj = context.applicationContext as Application
     val viewModel = DailyTasksViewModel(applicationObj)
-//    var isLoading = true
     viewModel.onScreenCreated()
 
     Scaffold(
@@ -298,21 +298,6 @@ fun DailyTasksLayout(
             }
         }
     }
-//    if (isLoading) {
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize(),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            Box(
-//                Modifier
-//                    .fillMaxSize()
-//                    .alpha(0.9f)
-//                    .background(Color.Black)
-//            )
-//            CirclesLoader()
-//        }
-//    }
 }
 
 @Composable
