@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.fabcompose"
-        minSdk 21
+        minSdk 26
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -87,5 +87,11 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_version"
+
+    // For AppWidgets support
+    implementation "androidx.glance:glance-appwidget:1.0.0-alpha03"
+
+    // For Wear-Tiles support
+    implementation "androidx.glance:glance-wear-tiles:1.0.0-alpha03"
 
 }
