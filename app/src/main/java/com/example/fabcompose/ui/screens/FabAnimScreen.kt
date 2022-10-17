@@ -22,6 +22,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.fabcompose.ui.screens.destinations.DailyTasksLayoutDestination
+import com.example.fabcompose.ui.screens.destinations.GraphScreenLayoutDestination
 import com.example.fabcompose.ui.theme.Blue700
 import com.example.fabcompose.ui.theme.Green700
 import com.example.fabcompose.ui.theme.Red700
@@ -143,7 +144,9 @@ fun FabAnimLayout(
                 contentAlignment = Alignment.BottomEnd
             ) {
                 IconButton(
-                    onClick = {  },
+                    onClick = {
+                        navigator.navigate(GraphScreenLayoutDestination)
+                    },
                     modifier = Modifier
                         .size(50.dp)
                         .shadow(elevation = 8.dp, shape = CircleShape)
@@ -160,7 +163,7 @@ fun FabAnimLayout(
                         }
                 ) {
                     Icon(
-                        Icons.Default.Email,
+                        Icons.Default.Notifications,
                         contentDescription = "fab2",
                         tint = Color.White
                     )

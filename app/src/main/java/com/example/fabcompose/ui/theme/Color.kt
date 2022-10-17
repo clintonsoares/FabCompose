@@ -24,3 +24,19 @@ val DarkGreenCustom = Color(0xFF1B5E20)
 //Custom Color Palette
 val PrimaryColor = Green700
 val DarkTextColor = DarkGreenCustom
+
+//Chart Colors
+val SimpleColors = listOf(
+    Color.Black,
+    Color.Blue,
+    Color.Yellow,
+    Color.Red,
+    Color.LightGray,
+    Color.Magenta,
+    Color.Cyan,
+    Color.Green,
+    Color.Gray,
+    Color(0xFF1B5E20),
+    Color(0xFF1A237E),
+    Color(0xFF4A148C)
+)
